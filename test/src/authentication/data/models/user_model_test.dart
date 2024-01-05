@@ -8,8 +8,6 @@
 // using mocktail API
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tdd_tutorial/core/utils/typedef.dart';
@@ -75,6 +73,19 @@ void main() {
       });
       // Assert
       expect(result, equals(tJson));
+    });
+  });
+
+  group('copyWith', () {
+    test('should return a correct Name after using [CopyWith]', () {
+      // Act
+      final result = tModel.copyWith(name: 'Paul');
+
+      // Assert
+      expect(result.name, equals('Paul'));
+      expect(result.avatar, equals('_empty.avatar'));
+      expect(result.id, equals('1'));
+      expect(result != tModel, true);
     });
   });
 }
