@@ -5,6 +5,7 @@ import 'package:tdd_tutorial/src/authentication/data/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/typedef.dart';
 
 abstract class AuthenticationRemoteDataSource {
   Future<void> createUser({
@@ -16,8 +17,8 @@ abstract class AuthenticationRemoteDataSource {
   Future<List<UserModel>> getUsers();
 }
 
-const kCreateUserEndpoint = '/users'; // - post
-const kGetUsersEndpoint = '/users'; // - get
+const kCreateUserEndpoint = '/test-api/users'; // - post
+const kGetUsersEndpoint = '/test-api/users'; // - get
 
 class AuthenticationRemoteDataSourceImplementation
     implements AuthenticationRemoteDataSource {
@@ -35,7 +36,7 @@ class AuthenticationRemoteDataSourceImplementation
 
     try {
       final response = await _client.post(
-        Uri.parse('$kBaseUrl$kCreateUserEndpoint'),
+        Uri.https(kBaseUrl, kCreateUserEndpoint),
         body: jsonEncode({
           'createdAt': createdAt,
           'name': name,
@@ -47,15 +48,32 @@ class AuthenticationRemoteDataSourceImplementation
         throw APIException(
             message: response.body, statusCode: response.statusCode);
       }
+    } on APIException {
+      rethrow;
     } catch (e) {
-      // TODO: Stopped here...
-      throw APIException(message: e.toString(), statusCode: 505);
+      throw APIException(
+          message: e.toString(),
+          statusCode:
+              505); // dart error (no convention, but we mark 505 as dart one)
     }
   }
 
   @override
   Future<List<UserModel>> getUsers() async {
-    // TODO: implement getUsers
-    throw UnimplementedError();
+    try {
+      final response =
+          await _client.get(Uri.https(kBaseUrl, kGetUsersEndpoint));
+      if (response.statusCode != 200) {
+        throw APIException(
+            message: response.body, statusCode: response.statusCode);
+      }
+      return List<DataMap>.from(jsonDecode(response.body) as List)
+          .map((userData) => UserModel.fromMap(userData))
+          .toList();
+    } on APIException {
+      rethrow;
+    } catch (e) {
+      throw APIException(message: e.toString(), statusCode: 505);
+    }
   }
 }

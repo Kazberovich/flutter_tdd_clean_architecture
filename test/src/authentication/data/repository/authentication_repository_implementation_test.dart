@@ -94,16 +94,15 @@ void main() {
     test(
         'should return a [ServerFailure] when the call to the remote source is unsuccessful',
         () async {
-        when(() => remoteDataSource.getUsers()).thenThrow(tException);
-        
-        // Act
-          final result = await repositoryImplementation.getUsers();
-          
-          // Assert
-          expect(result, equals(Left(APIFailure.fromException(tException))));
-          verify(() => remoteDataSource.getUsers()).called(1);
-          verifyNoMoreInteractions((remoteDataSource));
-          
-        });
+      when(() => remoteDataSource.getUsers()).thenThrow(tException);
+
+      // Act
+      final result = await repositoryImplementation.getUsers();
+
+      // Assert
+      expect(result, equals(Left(APIFailure.fromException(tException))));
+      verify(() => remoteDataSource.getUsers()).called(1);
+      verifyNoMoreInteractions((remoteDataSource));
+    });
   });
 }
