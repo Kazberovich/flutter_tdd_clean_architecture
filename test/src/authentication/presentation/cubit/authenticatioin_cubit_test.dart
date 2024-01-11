@@ -59,7 +59,7 @@ void main() {
         });
 
     blocTest<AuthenticationCubit, AuthenticationState>(
-      'should emit [CreatingUser, AuthenticationError] when successful',
+      'should emit [CreatingUser, AuthenticationError] when unsuccessful',
       build: () {
         when(() => createUser(any()))
             .thenAnswer((_) async => const Left(tAPIFailure));
@@ -77,6 +77,37 @@ void main() {
       verify: (_) {
         verify(() => createUser(tCreateUserParams)).called(1);
         verifyNoMoreInteractions(createUser);
+      },
+    );
+  });
+
+  group('getUsers', () {
+    blocTest<AuthenticationCubit, AuthenticationState>(
+      'should emit [GettingUsers, UsersLoaded] when successful',
+      build: () {
+        when(() => getUsers()).thenAnswer((_) async => const Right([]));
+        return cubit;
+      },
+      act: (cubit) => cubit.getUsers(),
+      expect: () => const [GettingUsers(), UsersLoaded([])],
+      verify: (_) {
+        verify(() => getUsers()).called(1);
+        verifyNoMoreInteractions(getUsers);
+      },
+    );
+
+    blocTest<AuthenticationCubit, AuthenticationState>(
+      'should emit [GettingUsers, AuthenticationError] when unsuccessful',
+      build: () {
+        when(() => getUsers()).thenAnswer((_) async => const Left(tAPIFailure));
+        return cubit;
+      },
+      act: (cubit) => cubit.getUsers(),
+      expect: () =>
+          [const GettingUsers(), AuthenticationError(tAPIFailure.errorMessage)],
+      verify: (_) {
+        verify(() => getUsers()).called(1);
+        verifyNoMoreInteractions(getUsers);
       },
     );
   });
