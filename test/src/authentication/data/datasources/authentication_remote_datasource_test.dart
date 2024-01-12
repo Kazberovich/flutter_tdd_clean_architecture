@@ -24,7 +24,7 @@ void main() {
     test('should complete successfully when the status code is 200 or 201',
         () async {
       // stub
-      when(() => client.post(any(), body: any(named: 'body'))).thenAnswer(
+      when(() => client.post(any(), body: any(named: 'body'), headers: {'Content-Type': 'application/json'})).thenAnswer(
         (_) async => http.Response('User created successfully', 201),
       );
 
@@ -44,7 +44,7 @@ void main() {
               'createdAt': 'createdAt',
               'name': 'name',
               'avatar': 'avatar',
-            })),
+            }), headers: {'Content-Type': 'application/json'}),
       ).called(1);
 
       verifyNoMoreInteractions(client);
@@ -52,7 +52,7 @@ void main() {
 
     test('should throw [APIException] when the status code is not 200 or 201',
         () async {
-      when(() => client.post(any(), body: any(named: 'body'))).thenAnswer(
+      when(() => client.post(any(), body: any(named: 'body'), headers: {'Content-Type': 'application/json'})).thenAnswer(
         (_) async => http.Response('Invalid email address', 400),
       );
 
