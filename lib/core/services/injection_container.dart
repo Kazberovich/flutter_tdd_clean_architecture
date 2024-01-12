@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:get_it/get_it.dart';
 import 'package:tdd_tutorial/src/authentication/data/datasources/authentication_remote_datasource.dart';
@@ -30,5 +29,5 @@ Future<void> init() async {
       () => AuthenticationRemoteDataSourceImplementation(serviceLocator()));
 
   // External dependencies
-  serviceLocator.registerLazySingleton(() => http.Client.new);
+  serviceLocator.registerLazySingleton(() => http.Client());
 }
